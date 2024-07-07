@@ -68,7 +68,7 @@ public class OnVehicleUpdateEvent implements Listener
                 return;
             }
             poweredCart.setVelocity(new Vector(0 ,0 ,0));
-
+            //Can a funciton be added here that increases pushX or pushZ?
             //to stop fuel consumption just re-add the consumed
             int fuelToReAdd = plugin.configManager.mainConfig.getConfig().getInt("trains.fuel_consumption_per_tick");
             ((PoweredMinecart) poweredCart).setFuel(((PoweredMinecart) poweredCart).getFuel() + fuelPerTick);
