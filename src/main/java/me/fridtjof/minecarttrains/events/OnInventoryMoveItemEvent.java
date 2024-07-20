@@ -1,7 +1,6 @@
 package me.fridtjof.minecarttrains.events;
 
 import me.fridtjof.minecarttrains.MinecartTrains;
-import me.fridtjof.puddingapi.bukkit.items.HopperUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Hopper;
 import org.bukkit.entity.minecart.StorageMinecart;
@@ -41,39 +40,7 @@ public class OnInventoryMoveItemEvent implements Listener
     }
 
     //prevent hoppers from filling non coal items in carts
-    @EventHandler
-    public void onMoveItemIntoFuelCartEvent(InventoryMoveItemEvent event)
-    {
-        if(!(event.getDestination().getHolder() instanceof StorageMinecart))
-        {
-            return;
-        }
-
-        if(!(event.getSource().getHolder() instanceof Hopper))
-        {
-            return;
-        }
-
-        if((event.getItem().getType() == Material.COAL) || (event.getItem().getType() == Material.CHARCOAL))
-        {
-            return;
-        }
-
-        if(isFuelCart((StorageMinecart) event.getDestination().getHolder()))
-        {
-            event.setCancelled(true);
-
-            //rearrange to possibly let other itemstacks get through
-            if(!HopperUtils.rearrangeHopper(event.getSource(), Material.COAL))
-            {
-                if(!HopperUtils.rearrangeHopper(event.getSource(), Material.CHARCOAL))
-                {
-                    //rearranging was not successful
-                    return;
-                }
-            }
-        }
-    }
+    //cut from rebuild due to HopperUtils error
 
     public boolean isFuelCart(StorageMinecart cart)
     {
