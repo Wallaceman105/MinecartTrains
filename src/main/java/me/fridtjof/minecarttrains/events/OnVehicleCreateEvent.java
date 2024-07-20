@@ -6,7 +6,7 @@ import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
-
+//Like all Furnace Minecart features, this is not supported in this fork and will eventually be removed.
 public class OnVehicleCreateEvent implements Listener
 {
 
