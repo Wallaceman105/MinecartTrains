@@ -39,11 +39,12 @@ public class OnVehicleUpdateEvent implements Listener
         minecart = (Minecart) vehicle;
 
 
-        //this if only in the current one way linking system
+        //Ensures the below function only works on trains, not on single minecarts
         if(!linkageManager.hasLink((minecart)))
         {
-
-            //stopping furnace minecart on not powered power rail
+            //Causes a full stop for Furnace Minecart on un-powered rail, and pauses Fuel Consumption.
+            //Attempts to remove this feature broke the entire plugin. Not sure why?
+            //A load-bearing coconut, I guess.
             if(!(minecart instanceof PoweredMinecart))
             {
                 return;
@@ -78,13 +79,13 @@ public class OnVehicleUpdateEvent implements Listener
         }
 
         parent = Bukkit.getEntity(linkageManager.getLinkUniqueId(minecart));
-
+        //Breaks link if parent cart is broken
         if(parent == null)
         {
             linkageManager.removeLink(minecart);
             return;
         }
-
+        //Breaks link if the parent and child are the same cart
         if(parent == minecart)
         {
             plugin.getLogger().warning("Minecart is coupled with itself! - this shouldn't be possible!");
@@ -92,26 +93,36 @@ public class OnVehicleUpdateEvent implements Listener
             return;
         }
 
+        //Defines the distance value as (parent's location)-(child's location)
         double distance = minecart.getLocation().distance(parent.getLocation());
-
-        double speed = 1.0;
-
-        if((distance > 3) || distance < 0.7)
+        //Sets the speed at which carts move towards their dependant. At HSRail speeds, this value must be high
+        //to avoid breaking trains during acceleration.
+        //Values in excess of 5 require more precision for the 'else if' statements, or else carts will overshoot
+        //and collide, disrupting momentum and causing the 'jiggle' bug.
+        double speed = 8.5;
+        //Sets max/min distance for links. Shorter distances are more reliable along corners, however, until the
+        //linkageManager can be reworked, longer maximums are needed to handle acceleration.
+        if((distance > 9.5) || distance < 0.7)
         {
             linkageManager.removeLink(minecart);
             minecart.setVelocity(new Vector(0, 0, 0));
             parent.setVelocity(new Vector(0, 0, 0));
+            //^Brings carts with broken links to a hard stop, preventing runaway trains
         }
-        else if(distance < 1.1)
+        //Handles gap between parent and dependant. Values set too low result in collisions between carts
+        //while train is sitting still, especially on declines, causing 'jiggling' that kills momentum
+        //More precise parameters helps to eliminate the 'jiggling' behavior that interferes with momentum
+        //Slower 'away' speeds compared to 'toward' speeds also help to eliminate 'jiggling'
+        else if(distance < 1.599)
         {
-            moveToward(minecart, parent, speed, (distance - 1.2));
+            moveToward(minecart, parent, (speed * .5), (distance - 1.6));
         }
-        else if(distance > 1.3)
+        else if(distance > 1.601)
         {
-            moveToward(minecart, parent, speed, (distance - 1.2));
+            moveToward(minecart, parent, speed, (distance - 1.6));
         }
     }
-
+    //defines moveToward, which handles the elastic movement of dependant carts. Uses the speed set earlier.
     public void moveToward(Entity child, Entity parent, double speed, double distance)
     {
         Location childLoc = child.getLocation();
