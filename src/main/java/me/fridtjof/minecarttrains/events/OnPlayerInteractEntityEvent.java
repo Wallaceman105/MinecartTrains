@@ -87,8 +87,8 @@ public class OnPlayerInteractEntityEvent implements Listener
 
             Entity firstCart = Bukkit.getEntity(firstCarts.get(playerId));
             Entity secondCart = Bukkit.getEntity(secondCarts.get(playerId));
-
-            if(firstCart.getLocation().distance(secondCart.getLocation()) > 3)
+            //max distance to link carts
+            if(firstCart.getLocation().distance(secondCart.getLocation()) > 3.5)
             {
                 player.sendMessage(plugin.configManager.messagesFile.getConfig().getString("trains.coupling_failed_distance"));
                 return;
